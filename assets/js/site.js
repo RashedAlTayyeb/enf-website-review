@@ -2254,23 +2254,6 @@
     });
   }
 
-  function buildDonationPurposeOptions(programs) {
-    var list = programs || [];
-    var base = '<option value="">Select purpose</option><option value="general">General ENF Support</option><option value="education">Education</option>';
-    if (!list.length) {
-      return base + '<option value="other">Other supported cause</option>';
-    }
-    return (
-      base +
-      list
-        .map(function (program) {
-          return '<option value="' + escapeHtml(program.slug || program.title) + '">' + escapeHtml(program.title) + "</option>";
-        })
-        .join("") +
-      '<option value="other">Other supported cause</option>'
-    );
-  }
-
   function buildDonationServiceOptions(services) {
     var list = services || [];
     if (!list.length) {
@@ -2293,9 +2276,6 @@
   }
 
   function renderDonatePage() {
-    var services = content.donate.donationServices || [];
-    var programs = content.whatWeDo.programs || [];
-
     root.innerHTML =
       hero({
         title: "Donate Now",
@@ -2312,14 +2292,15 @@
 
       '<div class="donation-steps mt-md">' +
       '<button type="button" class="step-chip is-active" data-donation-step-nav="1"><span>1</span> Type</button>' +
-      '<button type="button" class="step-chip" data-donation-step-nav="2"><span>2</span> Purpose</button>' +
-      '<button type="button" class="step-chip" data-donation-step-nav="3"><span>3</span> Amount</button>' +
-      '<button type="button" class="step-chip" data-donation-step-nav="4"><span>4</span> Identity</button>' +
-      '<button type="button" class="step-chip" data-donation-step-nav="5"><span>5</span> Payment</button>' +
-      '<button type="button" class="step-chip" data-donation-step-nav="6"><span>6</span> Confirm</button>' +
+      '<button type="button" class="step-chip" data-donation-step-nav="2"><span>2</span> Amount</button>' +
+      '<button type="button" class="step-chip" data-donation-step-nav="3"><span>3</span> Identity</button>' +
+      '<button type="button" class="step-chip" data-donation-step-nav="4"><span>4</span> Payment</button>' +
+      '<button type="button" class="step-chip" data-donation-step-nav="5"><span>5</span> Confirm</button>' +
       "</div>" +
 
       '<form id="donation-form" class="donation-flow mt-md">' +
+      '<input type="hidden" name="service_code" value="general">' +
+      '<input type="hidden" name="category_code" value="">' +
       '<section class="donation-step is-active" data-donation-step="1">' +
       '<h3 class="donation-step-title">Step 1: Donation Type</h3>' +
       '<div class="mode-toggle mt-sm" role="tablist">' +
@@ -2338,18 +2319,7 @@
       "</section>" +
 
       '<section class="donation-step" data-donation-step="2">' +
-      '<h3 class="donation-step-title">Step 2: Choose Purpose</h3>' +
-      '<input type="hidden" name="service_code" value="' + escapeHtml(services[0] && (services[0].code || services[0].service) || "general") + '">' +
-      '<div class="field mt-sm"><label>Purpose / Program</label><select name="purpose">' + buildDonationPurposeOptions(programs) + "</select></div>" +
-      '<input type="hidden" name="category_code" value="">' +
-      '<div class="step-actions mt-md">' +
-      '<button class="btn btn-ghost" type="button" data-donation-back>Back</button>' +
-      '<button class="btn btn-primary" type="button" data-donation-next>Continue</button>' +
-      "</div>" +
-      "</section>" +
-
-      '<section class="donation-step" data-donation-step="3">' +
-      '<h3 class="donation-step-title">Step 3: Select Amount</h3>' +
+      '<h3 class="donation-step-title">Step 2: Select Amount</h3>' +
       '<div class="amount-presets mt-sm">' +
       [10, 25, 50, 100, 250]
         .map(function (amount) {
@@ -2364,8 +2334,8 @@
       "</div>" +
       "</section>" +
 
-      '<section class="donation-step" data-donation-step="4">' +
-      '<h3 class="donation-step-title">Step 4: Sign In, Sign Up, or Continue as Guest</h3>' +
+      '<section class="donation-step" data-donation-step="3">' +
+      '<h3 class="donation-step-title">Step 3: Sign In, Sign Up, or Continue as Guest</h3>' +
       '<div class="auth-choice-grid mt-sm">' +
       '<button type="button" class="auth-choice-card" data-auth-choice="signin"><strong>Sign In</strong><p>For returning monthly donors.</p></button>' +
       '<button type="button" class="auth-choice-card" data-auth-choice="signup"><strong>Sign Up</strong><p>Create account for recurring donations.</p></button>' +
@@ -2397,8 +2367,8 @@
       "</div>" +
       "</section>" +
 
-      '<section class="donation-step" data-donation-step="5">' +
-      '<h3 class="donation-step-title">Step 5: Payment Method</h3>' +
+      '<section class="donation-step" data-donation-step="4">' +
+      '<h3 class="donation-step-title">Step 4: Payment Method</h3>' +
       '<input type="hidden" name="provider" value="">' +
       '<input type="hidden" name="payment_channel" value="">' +
       '<div class="gateway-channel-grid" data-gateway-channel-grid>' +
@@ -2431,8 +2401,8 @@
       "</div>" +
       "</section>" +
 
-      '<section class="donation-step" data-donation-step="6">' +
-      '<h3 class="donation-step-title">Step 6: Confirm and Complete</h3>' +
+      '<section class="donation-step" data-donation-step="5">' +
+      '<h3 class="donation-step-title">Step 5: Confirm and Complete</h3>' +
       '<div class="integration-note">Review your selected options in the summary, then complete payment.</div>' +
       '<div class="form-grid mt-sm">' +
       '<div class="field"><label>First Name</label><input type="text" name="first_name" required placeholder="Enter your first name"></div>' +
@@ -2458,7 +2428,6 @@
       '<h3 class="section-title" style="font-size:1.35rem">Your Selection</h3>' +
       '<ul class="summary-list mt-md">' +
       '<li><span>Type</span><strong id="summary-type">Not selected yet</strong></li>' +
-      '<li><span>Purpose</span><strong id="summary-purpose">Not selected yet</strong></li>' +
       '<li><span>Amount</span><strong id="summary-amount">Not selected yet</strong></li>' +
       '<li><span>Identity</span><strong id="summary-account">Not selected yet</strong></li>' +
       '<li><span>Gateway</span><strong id="summary-provider">Not selected yet</strong></li>' +
@@ -4421,7 +4390,6 @@
     var amountButtons = Array.prototype.slice.call(document.querySelectorAll("[data-amount]"));
 
     var amountInput = form.querySelector('[name="amount"]');
-    var purposeSelect = form.querySelector('[name="purpose"]');
     var serviceInput = form.querySelector('[name="service_code"]');
     var categoryInput = form.querySelector('[name="category_code"]');
     var providerInput = form.querySelector('[name="provider"]');
@@ -4442,7 +4410,6 @@
     var summaryType = document.getElementById("summary-type");
     var summaryAmount = document.getElementById("summary-amount");
     var summaryAccount = document.getElementById("summary-account");
-    var summaryPurpose = document.getElementById("summary-purpose");
     var summaryProvider = document.getElementById("summary-provider");
     var summaryChannel = document.getElementById("summary-channel");
     var summaryBilling = document.getElementById("summary-billing");
@@ -4474,7 +4441,6 @@
       donorProfile: null,
       walletSupported: !!window.PaymentRequest,
       applePaySupported: !!window.ApplePaySession,
-      purposeLabel: "",
       paymentStatus: "Pending",
     };
 
@@ -4555,11 +4521,11 @@
     }
 
     function ensureStepUnlock(step) {
-      state.maxUnlockedStep = Math.max(state.maxUnlockedStep, Math.min(6, step));
+      state.maxUnlockedStep = Math.max(state.maxUnlockedStep, Math.min(5, step));
     }
 
     function showStep(step) {
-      state.step = Math.max(1, Math.min(6, step));
+      state.step = Math.max(1, Math.min(5, step));
       stepPanels.forEach(function (panel) {
         panel.classList.toggle("is-active", Number(panel.getAttribute("data-donation-step")) === state.step);
       });
@@ -4605,14 +4571,11 @@
           ? (state.mode === "monthly" ? "Monthly Subscription" : "One-Time Donation")
           : "Not selected yet";
       }
-      if (summaryPurpose) {
-        summaryPurpose.textContent = state.completed[2] && state.purposeLabel ? state.purposeLabel : "Not selected yet";
-      }
       if (summaryAmount) {
-        summaryAmount.textContent = state.completed[3] && state.amount > 0 ? formatJod(state.amount) : "Not selected yet";
+        summaryAmount.textContent = state.completed[2] && state.amount > 0 ? formatJod(state.amount) : "Not selected yet";
       }
       if (summaryAccount) {
-        if (!state.completed[4]) {
+        if (!state.completed[3]) {
           summaryAccount.textContent = "Not selected yet";
         } else if (state.authFlow === "guest") {
           summaryAccount.textContent = "Continue as Guest";
@@ -4623,12 +4586,12 @@
         }
       }
       if (summaryProvider) {
-        summaryProvider.textContent = state.completed[5]
+        summaryProvider.textContent = state.completed[4]
           ? ((providerInput && providerInput.value === "aps") ? "Amazon Payment Services" : "PayTabs")
           : "Not selected yet";
       }
       if (summaryChannel) {
-        summaryChannel.textContent = state.completed[5] ? (channelLabelMap[state.paymentChannel] || "Not selected yet") : "Not selected yet";
+        summaryChannel.textContent = state.completed[4] ? (channelLabelMap[state.paymentChannel] || "Not selected yet") : "Not selected yet";
       }
       if (summaryBilling) {
         summaryBilling.textContent = state.completed[1]
@@ -4677,7 +4640,7 @@
         setMode("one_time");
         setStatus("Guest checkout supports one-time donations only.", "error");
       }
-      state.completed[4] = flow === "guest";
+      state.completed[3] = flow === "guest";
       updateSummary();
     }
 
@@ -4734,8 +4697,8 @@
         return true;
       }
       if (step === 2) {
-        if (!purposeSelect || !purposeSelect.value) {
-          setStatus("Please choose donation purpose.", "error");
+        if (!(state.amount > 0)) {
+          setStatus("Please select or enter a valid donation amount.", "error");
           return false;
         }
         state.completed[2] = true;
@@ -4743,15 +4706,6 @@
         return true;
       }
       if (step === 3) {
-        if (!(state.amount > 0)) {
-          setStatus("Please select or enter a valid donation amount.", "error");
-          return false;
-        }
-        state.completed[3] = true;
-        ensureStepUnlock(4);
-        return true;
-      }
-      if (step === 4) {
         if (!state.authFlow) {
           setStatus("Please choose Sign In, Sign Up, or Continue as Guest.", "error");
           return false;
@@ -4764,11 +4718,11 @@
           setStatus("Please complete sign in or sign up for monthly subscriptions.", "error");
           return false;
         }
-        state.completed[4] = true;
-        ensureStepUnlock(5);
+        state.completed[3] = true;
+        ensureStepUnlock(4);
         return true;
       }
-      if (step === 5) {
+      if (step === 4) {
         if (!state.paymentChannel) {
           setStatus("Please choose payment method.", "error");
           return false;
@@ -4789,8 +4743,8 @@
           setStatus("Please accept terms before continuing.", "error");
           return false;
         }
-        state.completed[5] = true;
-        ensureStepUnlock(6);
+        state.completed[4] = true;
+        ensureStepUnlock(5);
         return true;
       }
       return true;
@@ -4929,15 +4883,6 @@
       });
     }
 
-    if (purposeSelect) {
-      purposeSelect.addEventListener("change", function () {
-        state.purposeLabel = purposeSelect.value
-          ? (purposeSelect.options[purposeSelect.selectedIndex] ? purposeSelect.options[purposeSelect.selectedIndex].text : "")
-          : "";
-        updateSummary();
-      });
-    }
-
     if (signInButton) {
       signInButton.addEventListener("click", function () {
         clearAuthStatus();
@@ -4954,7 +4899,7 @@
             state.donorSession = { token: result.token, profile: result.profile };
             setDonorSession(state.donorSession);
             applyDonorProfile(result.profile);
-            state.completed[4] = true;
+            state.completed[3] = true;
             setAuthStatus("Signed in successfully.", "success");
             updateSummary();
           })
@@ -4965,7 +4910,7 @@
                 state.donorSession = { token: demoResult.token, profile: demoResult.profile };
                 setDonorSession(state.donorSession);
                 applyDonorProfile(demoResult.profile);
-                state.completed[4] = true;
+                state.completed[3] = true;
                 setAuthStatus("Signed in successfully (local demo mode).", "success");
                 updateSummary();
                 return;
@@ -5019,7 +4964,7 @@
             state.donorSession = { token: result.token, profile: result.profile };
             setDonorSession(state.donorSession);
             applyDonorProfile(result.profile);
-            state.completed[4] = true;
+            state.completed[3] = true;
             setAuthStatus("Account created and signed in successfully.", "success");
             setAuthFlow("signin");
             updateSummary();
@@ -5037,7 +4982,7 @@
                 state.donorSession = { token: demoResult.token, profile: demoResult.profile };
                 setDonorSession(state.donorSession);
                 applyDonorProfile(demoResult.profile);
-                state.completed[4] = true;
+                state.completed[3] = true;
                 setAuthStatus("Account created and signed in successfully (local demo mode).", "success");
                 setAuthFlow("signin");
                 updateSummary();
@@ -5060,7 +5005,7 @@
       button.addEventListener("click", function () {
         clearStatus();
         if (!validateStep(state.step)) return;
-        showStep(Math.min(state.step + 1, 6));
+        showStep(Math.min(state.step + 1, 5));
       });
     });
 
@@ -5141,7 +5086,7 @@
       event.preventDefault();
       clearStatus();
 
-      if (!validateStep(5)) return;
+      if (!validateStep(4)) return;
 
       var firstName = (form.querySelector('[name="first_name"]').value || "").trim();
       var lastName = (form.querySelector('[name="last_name"]').value || "").trim();
@@ -5149,7 +5094,6 @@
       var phone = (form.querySelector('[name="phone"]').value || "").trim();
       var amount = parseAmount((form.querySelector('[name="amount"]').value || "0").trim());
       var serviceCode = form.querySelector('[name="service_code"]').value || "general";
-      var purpose = form.querySelector('[name="purpose"]').value || "general";
       var provider = form.querySelector('[name="provider"]').value || "paytabs";
       var paymentChannel = form.querySelector('[name="payment_channel"]').value || "";
       var categoryCode = form.querySelector('[name="category_code"]').value || "";
@@ -5182,7 +5126,7 @@
         payment_channel: paymentChannel,
         service_code: serviceCode,
         plan_id: state.mode === "monthly" ? state.planId || "custom" : null,
-        purpose: purpose,
+        purpose: null,
         category_code: categoryCode || null,
         reference_note: referenceNote || null,
         recurring_consent: state.mode === "monthly" ? !!(consentInput && consentInput.checked) : false,
@@ -5241,7 +5185,7 @@
             setStatus("Checkout initialized. Completing in local/demo mode.", "success");
           }
           setOutcome(true, "Donation setup completed successfully.", reference);
-          showStep(6);
+          showStep(5);
         })
         .catch(function (error) {
           var networkHint =
