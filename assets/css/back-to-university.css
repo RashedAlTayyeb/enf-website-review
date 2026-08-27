@@ -3,8 +3,8 @@
   --ink-soft: #123957;
   --blue: #008ed6;
   --blue-light: #64c8f1;
-  --orange: #f58235;
-  --orange-deep: #df6423;
+  --orange: #fdb72c;
+  --orange-deep: #fdb72c;
   --cream: #f2eee5;
   --sand: #dcd3c1;
   --line: rgba(7, 31, 53, 0.16);
@@ -93,6 +93,12 @@ input {
   pointer-events: auto;
 }
 
+.nav-lockup {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.55rem, 1.2vw, 1rem);
+}
+
 .nav-mark {
   display: grid;
   width: 8rem;
@@ -106,6 +112,18 @@ input {
   object-fit: contain;
   opacity: 0.94;
   filter: brightness(0) invert(1) drop-shadow(0 0.3rem 0.75rem rgba(0, 0, 0, 0.28));
+}
+
+.nav-partner-x {
+  color: var(--orange);
+  font-family: var(--display);
+  font-size: 1.15rem;
+}
+
+.nav-partner-logo {
+  width: clamp(6.8rem, 10vw, 9rem);
+  height: auto;
+  filter: drop-shadow(0 0.3rem 0.75rem rgba(0, 0, 0, 0.28));
 }
 
 .nav-cta {
@@ -154,8 +172,8 @@ input {
   z-index: -3;
   inset: 0;
   background:
-    linear-gradient(90deg, rgba(3, 19, 34, 0.78) 0%, rgba(3, 19, 34, 0.18) 50%, rgba(3, 19, 34, 0.76) 100%),
-    linear-gradient(0deg, rgba(3, 19, 34, 0.7) 0%, transparent 55%);
+    linear-gradient(90deg, rgba(3, 19, 34, 0.9) 0%, rgba(3, 19, 34, 0.54) 50%, rgba(3, 19, 34, 0.88) 100%),
+    linear-gradient(0deg, rgba(3, 19, 34, 0.84) 0%, rgba(3, 19, 34, 0.16) 62%);
 }
 
 .hero-glow {
@@ -173,7 +191,7 @@ input {
 
 .hero-content {
   display: grid;
-  grid-template-columns: minmax(0, 1.08fr) minmax(18rem, 0.72fr);
+  grid-template-columns: minmax(0, 1fr);
   align-items: center;
   gap: clamp(3rem, 8vw, 9rem);
   width: min(91vw, 92rem);
@@ -187,6 +205,7 @@ input {
 
 .hero-title-wrap {
   justify-self: start;
+  max-width: min(100%, 58rem);
   color: var(--white);
 }
 
@@ -212,11 +231,11 @@ input {
 }
 
 .hero-title-wrap h1 {
-  max-width: 10ch;
+  max-width: 12ch;
   margin: 0;
   color: var(--white);
   font-family: var(--display);
-  font-size: clamp(3.5rem, 7.4vw, 8.5rem);
+  font-size: clamp(3.5rem, 6.4vw, 7.3rem);
   font-weight: 800;
   line-height: 1.1;
   letter-spacing: -0.055em;
@@ -236,6 +255,7 @@ input {
   color: var(--ink);
   border-radius: 100vw;
   background: var(--orange);
+  box-shadow: 0 0.9rem 2.7rem rgba(253, 183, 44, 0.34);
   font-family: var(--display);
   font-weight: 700;
   transition: gap 200ms ease, background 200ms ease;
@@ -313,7 +333,7 @@ input {
   height: 0.72rem;
   border-radius: 50%;
   background: var(--orange);
-  box-shadow: 0 0 0 0.28rem rgba(245, 130, 53, 0.18);
+  box-shadow: 0 0 0 0.28rem rgba(253, 183, 44, 0.18);
 }
 
 .sound-toggle[aria-pressed="true"] .sound-icon {
@@ -752,8 +772,8 @@ input {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.55rem 0.8rem;
-  background: rgba(255, 253, 248, 0.94);
+  padding: 0;
+  background: transparent;
 }
 
 .footer-lockup img {
@@ -761,6 +781,7 @@ input {
   max-width: 5.2rem;
   height: 2.2rem;
   object-fit: contain;
+  filter: brightness(0) invert(1) drop-shadow(0 0.2rem 0.5rem rgba(0, 0, 0, 0.22));
 }
 
 .footer-lockup span {
@@ -833,8 +854,12 @@ input {
   }
 
   .nav-mark {
-    width: 6.5rem;
-    height: 3.2rem;
+    width: 5.4rem;
+    height: 2.8rem;
+  }
+
+  .nav-partner-logo {
+    width: 5.8rem;
   }
 
   .campaign-hero {
@@ -851,7 +876,7 @@ input {
   }
 
   .hero-shade {
-    background: linear-gradient(0deg, rgba(3, 19, 34, 0.9) 0%, rgba(3, 19, 34, 0.25) 75%, rgba(3, 19, 34, 0.48) 100%);
+    background: linear-gradient(0deg, rgba(3, 19, 34, 0.94) 0%, rgba(3, 19, 34, 0.58) 74%, rgba(3, 19, 34, 0.7) 100%);
   }
 
   .hero-content {
@@ -862,22 +887,7 @@ input {
   }
 
   .hero-title-wrap h1 {
-    font-size: clamp(3rem, 15vw, 4.8rem);
-  }
-
-  .partner-lockup {
-    order: -1;
-    gap: 0.55rem;
-    width: min(100%, 22rem);
-    padding: 0.75rem;
-  }
-
-  .partner-logo {
-    min-height: 4.2rem;
-  }
-
-  .partner-logo img {
-    max-height: 4rem;
+    font-size: clamp(2.7rem, 13vw, 4.25rem);
   }
 
   .sound-toggle {
