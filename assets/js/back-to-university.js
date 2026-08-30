@@ -1,8 +1,6 @@
 (function () {
   "use strict";
 
-  var hero = document.getElementById("campaign-hero");
-  var heroContent = document.getElementById("hero-content");
   var video = document.getElementById("campaign-video");
   var soundToggle = document.getElementById("sound-toggle");
   var nav = document.querySelector(".campaign-nav");
@@ -12,18 +10,7 @@
   var namePattern = /^[\u0600-\u06FFa-zA-Z][\u0600-\u06FFa-zA-Z\s'’-]{1,79}$/;
   var emailPattern = /^[^\s@]+@[^\s@]+\.[A-Za-z]{2,}$/;
 
-  function clamp(value, min, max) {
-    return Math.min(Math.max(value, min), max);
-  }
-
   function updateHero() {
-    if (!hero || !heroContent) return;
-    var rect = hero.getBoundingClientRect();
-    var scrollable = Math.max(hero.offsetHeight - window.innerHeight, 1);
-    var progress = clamp(-rect.top / scrollable, 0, 1);
-    var reveal = clamp((progress - 0.08) / 0.34, 0, 1);
-    hero.style.setProperty("--hero-progress", progress.toFixed(3));
-    heroContent.style.setProperty("--hero-reveal", reveal.toFixed(3));
     if (nav) nav.classList.toggle("is-scrolled", window.scrollY > 36);
   }
 
@@ -103,13 +90,12 @@
   function validateForm() {
     var values = Object.fromEntries(new FormData(form).entries());
     var valid = true;
-    ["first-name", "last-name", "email", "phone", "consent"].forEach(function (id) {
+    ["full-name", "email", "phone", "consent"].forEach(function (id) {
       setError(id, "");
     });
 
     [
-      ["first-name", values.first_name, "يرجى إدخال الاسم الأول بشكل صحيح."],
-      ["last-name", values.last_name, "يرجى إدخال اسم العائلة بشكل صحيح."]
+      ["full-name", values.full_name, "يرجى إدخال الاسم الكامل بشكل صحيح."]
     ].forEach(function (entry) {
       if (!namePattern.test(String(entry[1] || "").trim())) {
         setError(entry[0], entry[2]);
@@ -136,8 +122,7 @@
     return {
       valid: valid,
       payload: {
-        first_name: String(values.first_name || "").trim(),
-        last_name: String(values.last_name || "").trim(),
+        full_name: String(values.full_name || "").trim(),
         email: String(values.email || "").trim().toLowerCase(),
         phone: phone,
         consent: document.getElementById("consent").checked,
